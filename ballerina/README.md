@@ -1,15 +1,151 @@
 # Ballerina Azure Blob Storage Data Loader
 
-The `ballerinax/ai.azure.storage.blob` package provides a `TextDataLoader` that retrieves
-documents from Azure Blob Storage containers and returns them as `ai:TextDocument` values,
-ready to be chunked, embedded, and indexed by the Ballerina AI module.
+The `ballerinax/ai.azure.storage.blob` module provides a `TextDataLoader` that retrieves documents from Azure Blob Storage containers and returns them as `ai:TextDocument` values, ready to be chunked, embedded, and indexed by the [Ballerina AI](https://central.ballerina.io/ballerina/ai) module. Inherently textual blobs are decoded directly, while PDF documents have their text extracted with Apache Tika.
 
-It implements the `ai:DataLoader` abstraction, so it works anywhere an `ai:DataLoader` is
-expected (for example, a RAG ingestion pipeline).
+It implements the `ai:DataLoader` abstraction, so it can be used anywhere an `ai:DataLoader` is expected (for example, in a Retrieval-Augmented Generation ingestion pipeline).
 
-Acquisition (authentication, blob listing, download, pagination) is delegated to the
-[`ballerinax/azure_storage_service.blobs`](https://central.ballerina.io/ballerinax/azure_storage_service.blobs)
-connector; text extraction from PDFs uses Apache Tika.
+The acquisition layer — authentication, blob listing, download, and pagination — is delegated to the [`ballerinax/azure_storage_service.blobs`](https://central.ballerina.io/ballerinax/azure_storage_service.blobs) connector.
 
-> This package is under active development. See `doc/` in the repository for the phased
-> implementation plan.
+## Overview
+
+- Reads blobs from one or more Azure Blob **containers** in a storage account.
+- Loads individual blobs as well as entire virtual folders (blob-name prefixes), optionally recursively.
+- Reads from multiple containers — including **every** container in the account — with a single loader instance.
+- Follows the `NextMarker` cursor to page through large containers automatically.
+- Returns every blob as an `ai:TextDocument`, based on its MIME type / extension:
+  - Inherently textual blobs (e.g. `txt`, `md`, `html`, `json`, `csv`, `xml`) are decoded directly.
+  - `pdf` blobs have their text extracted with Apache Tika.
+  - Other blobs that cannot be represented as text (e.g. images, audio, archives) are skipped with a
+    logged warning; explicitly naming such a blob as a path is an error.
+  - Microsoft Office documents (`.doc`, `.docx`, `.ppt`, `.pptx`, `.xls`, `.xlsx`) are **not** supported —
+    they are skipped in folder listings and rejected with an error when named explicitly.
+
+## Authentication
+
+Azure Blob Storage is accessed through the `ballerinax/azure_storage_service.blobs` connector, which supports two authorization mechanisms. Both are configured through `ConnectionConfig.accessKeyOrSAS` together with `ConnectionConfig.authorizationMethod`:
+
+| Mechanism | `authorizationMethod` | `accessKeyOrSAS` holds | Best for |
+| --- | --- | --- | --- |
+| Shared Access Signature (SAS) | `SAS` | A SAS token (the query string, e.g. `sv=...&sig=...`) | Scoped, time-limited, pre-signed access without sharing an account key |
+| Shared Key (account access key) | `ACCESS_KEY` | One of the storage account's access keys | Full-account, server-to-server access; the connector signs each request with HMAC-SHA256 |
+
+> **Note:** Azure AD / Microsoft Entra ID (OAuth2) is **not** supported in this version, as the underlying connector authorizes with Shared Key and SAS only.
+
+The service endpoint is derived from the account name as `https://{accountName}.blob.core.windows.net`.
+
+## Usage
+
+### Initialization
+
+```ballerina
+import ballerina/ai;
+import ballerinax/ai.azure.storage.blob;
+
+final blob:TextDataLoader loader = check new (
+    {
+        accountName: "contosostorage",
+        accessKeyOrSAS: "sv=2022-11-02&ss=b&srt=co&sp=rl&sig=...",
+        authorizationMethod: blob:SAS
+    },
+    [
+        {
+            // Load one explicit blob plus everything under /onboarding (recursively),
+            // restricted to PDFs.
+            container: "documents",
+            paths: ["/policies/leave-policy.pdf", "/onboarding"],
+            recursive: true,
+            includeExtensions: ["pdf"]
+        },
+        {
+            // A bare container name loads the whole container (non-recursive).
+            container: "specs",
+            paths: ["/api-design.md"]
+        }
+    ]
+);
+```
+
+### The container / prefix model
+
+Azure Blob Storage has no real folders: a container holds a flat set of blobs, and hierarchy is simulated by `/` characters in blob names (e.g. `reports/2026/q1.pdf`). This loader maps a configured **path** onto a blob-name **prefix**:
+
+- **A path with a trailing `/`, or the container root (`/`)** is treated as a virtual folder and listed by prefix.
+- **A path without a trailing `/`** is first tried as an explicitly named blob. If an exact blob exists it is loaded directly (and always loaded, regardless of the extension filter). If no such blob exists, the path is treated as a virtual folder — unless it looks like a file (has an extension), in which case a missing blob is reported as an error to help catch typos.
+- **A deliberately named non-text blob** (an image, an Office document, etc.) is an **error**, whereas the same blob discovered while listing a folder is skipped with a warning.
+
+`paths` defaults to `["/"]`, so a `Source` with only a `container` loads the whole container; set `paths` to `[]` to load nothing.
+
+### Recursion
+
+By default a folder prefix loads only the blobs **directly** under it. Set `recursive: true` to include blobs at any depth beneath the prefix:
+
+```ballerina
+{container: "documents", paths: ["/reports"], recursive: true}
+```
+
+### Reading from every container
+
+Set `container` to `"*"` to read from **every** container in the storage account. Because the `paths` are then applied to all containers, a path that does not exist in a given container is **skipped** for it rather than treated as an error:
+
+```ballerina
+{container: "*", paths: ["/shared"], recursive: true}
+```
+
+### Filtering by file type
+
+Each `Source` has its own `includeExtensions` to restrict which blobs are loaded from folder prefixes:
+
+- `includeExtensions: ["pdf"]` — only PDF blobs.
+- `includeExtensions: ["pdf", ".md", "TXT"]` — case-insensitive; a leading dot is optional.
+- omitted / `()` (the default) — load all types.
+
+The filter applies to blobs discovered while listing a folder prefix. A blob listed **explicitly** in `paths` is always loaded, even if its extension isn't in the list.
+
+### Loading documents
+
+```ballerina
+public function main() returns error? {
+    ai:Document[]|ai:Document documents = check loader.load();
+    // Pass the documents to a chunker / embedding provider / vector store ...
+}
+```
+
+`load()` returns a single `ai:Document` when exactly one blob is resolved, and an `ai:Document[]` otherwise (mirroring `ai:TextDataLoader`).
+
+Each returned `ai:TextDocument` carries metadata including the full blob name (`fileName`), and — when reported by Azure — the `mimeType` and `fileSize`.
+
+> **Note:** Azure's List Blobs response reports blob timestamps in RFC 1123 format, which the Ballerina `time` module's ISO 8601 parser does not accept, so `createdAt` / `modifiedAt` are currently omitted from the document metadata.
+
+## Configuration reference
+
+### `ConnectionConfig`
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `accountName` | `string` | — | The Azure Storage account name; used to build the blob service endpoint |
+| `accessKeyOrSAS` | `string` | — | An account access key or a SAS token, interpreted per `authorizationMethod` |
+| `authorizationMethod` | `AuthorizationMethod` | — | `ACCESS_KEY` (Shared Key) or `SAS` |
+| `httpVersion` | `http:HttpVersion` | `http:HTTP_1_1` | HTTP version understood by the client |
+| `http2Settings` | `http:ClientHttp2Settings` | — | HTTP/2 protocol settings |
+| `timeout` | `decimal` | `30` | Response timeout, in seconds |
+| `forwarded` | `string` | `"disable"` | Handling of the `forwarded`/`x-forwarded` header |
+| `poolConfig` | `http:PoolConfiguration` | — | Request pooling configuration |
+| `cache` | `http:CacheConfig` | — | HTTP caching configuration |
+| `compression` | `http:Compression` | `http:COMPRESSION_AUTO` | `accept-encoding` handling |
+| `circuitBreaker` | `http:CircuitBreakerConfig` | — | Circuit breaker configuration |
+| `retryConfig` | `http:RetryConfig` | — | Retry configuration |
+| `responseLimits` | `http:ResponseLimitConfigs` | — | Inbound response size limits |
+| `secureSocket` | `http:ClientSecureSocket` | — | SSL/TLS options |
+| `proxy` | `http:ProxyConfig` | — | Proxy server options |
+| `validation` | `boolean` | `true` | Inbound payload validation |
+
+The HTTP-level fields are forwarded to the underlying `ballerinax/azure_storage_service.blobs` client.
+
+### `Source`
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `container` | `string` | — | The container name to read from, or `"*"` for every container in the account |
+| `paths` | `string[]` | `["/"]` | Blob-name prefixes (virtual-folder paths) and/or explicit blob names. The default `["/"]` loads the whole container; `[]` loads nothing |
+| `recursive` | `boolean` | `false` | Whether folder prefixes are traversed into virtual sub-folders |
+| `includeExtensions` | `string[]?` | `()` | Extension allowlist applied to folder-prefix contents (e.g. `["pdf"]`). Case-insensitive; `()` loads all types. Explicit blob paths bypass it |

@@ -140,12 +140,82 @@ isolated function matchesExtensionFilter(string fileName, string[]? includeExten
 }
 
 // Parses an ISO 8601 timestamp into `time:Utc`, or `()` if absent/unparseable.
+// Azure's List Blobs XML reports `Creation-Time`/`Last-Modified` in RFC 1123 form, which
+// `time:utcFromString` does not accept, so those are dropped gracefully (see the README).
 isolated function toUtc(string? dateTime) returns time:Utc? {
     if dateTime is () {
         return ();
     }
     time:Utc|error utc = time:utcFromString(dateTime);
     return utc is time:Utc ? utc : ();
+}
+
+// Removes duplicate strings, preserving first-appearance order (used to de-dup container
+// names returned by a paginated `listContainers`).
+isolated function dedupeStrings(string[] values) returns string[] {
+    string[] result = [];
+    map<boolean> seen = {};
+    foreach string value in values {
+        if !seen.hasKey(value) {
+            seen[value] = true;
+            result.push(value);
+        }
+    }
+    return result;
+}
+
+// Normalizes a configured blob path into an Azure blob-name prefix: trims it, drops a
+// leading `/` (Azure blob names have no leading slash), and maps the container root
+// (`""`/`"/"`) to `""`. A trailing `/` is preserved, since it distinguishes an explicit
+// folder prefix (`reports/`) from an ambiguous file-or-folder path (`reports`).
+isolated function normalizeBlobPath(string path) returns string {
+    string trimmed = path.trim();
+    if trimmed == "" || trimmed == "/" {
+        return "";
+    }
+    return trimmed.startsWith("/") ? trimmed.substring(1) : trimmed;
+}
+
+// Reports whether a blob lies directly under a prefix (no further `/` in the remainder),
+// i.e. it is not inside a virtual sub-folder. Used for non-recursive listings, where a
+// prefix listing otherwise returns blobs at every depth.
+isolated function isDirectChild(string blobName, string prefix) returns boolean {
+    if blobName.length() < prefix.length() {
+        return false;
+    }
+    return !blobName.substring(prefix.length()).includes("/");
+}
+
+// Reads a `map<json>` property (from a blob's `Properties`) as a non-empty string, or `()`.
+// Azure's XML-derived values arrive as JSON strings, but numeric/other JSON is tolerated.
+isolated function propString(map<json> properties, string key) returns string? {
+    json value = properties[key];
+    if value is string {
+        return value.trim() == "" ? () : value;
+    }
+    if value is int|float|decimal {
+        return value.toString();
+    }
+    return ();
+}
+
+// Reads a `map<json>` property as a `decimal` (e.g. `Content-Length`), or `()`.
+isolated function propDecimal(map<json> properties, string key) returns decimal? {
+    json value = properties[key];
+    if value is int {
+        return <decimal>value;
+    }
+    if value is decimal {
+        return value;
+    }
+    if value is float {
+        return <decimal>value;
+    }
+    if value is string {
+        decimal|error parsed = decimal:fromString(value.trim());
+        return parsed is decimal ? parsed : ();
+    }
+    return ();
 }
 
 // MIME types (outside the `text/` family) treated as text.
