@@ -1,0 +1,4 @@
+accountName    = "<your-storage-account-name>"
+accessKeyOrSAS = "<your-access-key-or-sas-token>"
+authMethod     = "ACCESS_KEY"
+container      = "documents"
