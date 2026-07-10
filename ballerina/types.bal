@@ -14,59 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/http;
-
-# The mechanism used to authorize requests to Azure Blob Storage. Azure AD / OAuth2 is
-# intentionally not offered in this version (the underlying connector supports Shared Key
-# and SAS only); it can be added later without changing this enum.
-public enum AuthorizationMethod {
-    # An account access key (Shared Key). The connector signs each request with HMAC-SHA256.
-    ACCESS_KEY,
-    # A Shared Access Signature: a scoped, time-limited, pre-signed token.
-    SAS
-}
-
-# Authentication and connection configuration for Azure Blob Storage. This is a stable,
-# loader-owned surface that maps onto the `ballerinax/azure_storage_service.blobs`
-# connector's configuration; the HTTP-level options are forwarded to the connector's
-# blob client. The service endpoint is derived from `accountName`
-# (`https://{accountName}.blob.core.windows.net`).
-public type ConnectionConfig record {|
-    # The Azure Storage account name; used to build the blob service endpoint.
-    string accountName;
-    # An account access key or a SAS token, interpreted according to `authorizationMethod`.
-    @display {label: "", kind: "password"}
-    string accessKeyOrSAS;
-    # Whether `accessKeyOrSAS` is an account access key (Shared Key) or a SAS token.
-    AuthorizationMethod authorizationMethod;
-    # The HTTP version understood by the client
-    http:HttpVersion httpVersion = http:HTTP_1_1;
-    # Configurations related to HTTP/2 protocol
-    http:ClientHttp2Settings http2Settings?;
-    # The maximum time to wait (in seconds) for a response before closing the connection
-    decimal timeout = 30;
-    # The choice of setting `forwarded`/`x-forwarded` header
-    string forwarded = "disable";
-    # Configurations associated with request pooling
-    http:PoolConfiguration poolConfig?;
-    # HTTP caching related configurations
-    http:CacheConfig cache?;
-    # Specifies the way of handling compression (`accept-encoding`) header
-    http:Compression compression = http:COMPRESSION_AUTO;
-    # Configurations associated with the behaviour of the Circuit Breaker
-    http:CircuitBreakerConfig circuitBreaker?;
-    # Configurations associated with retrying
-    http:RetryConfig retryConfig?;
-    # Configurations associated with inbound response size limits
-    http:ResponseLimitConfigs responseLimits?;
-    # SSL/TLS-related options
-    http:ClientSecureSocket secureSocket?;
-    # Proxy server related options
-    http:ProxyConfig proxy?;
-    # Enables the inbound payload validation functionality provided by the constraint package
-    boolean validation = true;
-|};
-
 # A rule selecting what to load from one Azure Blob container. Several may be configured
 # per loader. A container is the unit of addressing (analogous to a SharePoint library):
 # there is no site/library chain, so a container maps directly to a `Source`.

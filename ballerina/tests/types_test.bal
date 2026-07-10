@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/http;
 import ballerina/test;
 import ballerinax/azure_storage_service.blobs;
 
@@ -42,99 +41,25 @@ isolated function testSourceExplicitValues() {
     test:assertEquals(src.includeExtensions, ["pdf", ".md"]);
 }
 
-// ---- ConnectionConfig defaults ----------------------------------------------
-
-@test:Config {}
-isolated function testConnectionConfigDefaults() {
-    ConnectionConfig config = {
-        accountName: "acct",
-        accessKeyOrSAS: "token",
-        authorizationMethod: SAS
-    };
-    test:assertEquals(config.httpVersion, http:HTTP_1_1, "httpVersion defaults to HTTP/1.1 (matches the connector)");
-    test:assertEquals(config.timeout, <decimal>30);
-    test:assertEquals(config.forwarded, "disable");
-    test:assertEquals(config.compression, http:COMPRESSION_AUTO);
-    test:assertTrue(config.validation);
-}
-
-// ---- AuthorizationMethod mapping --------------------------------------------
-
-@test:Config {}
-isolated function testAuthMethodMapping() {
-    test:assertEquals(toConnectorAuthMethod(ACCESS_KEY), blobs:ACCESS_KEY);
-    test:assertEquals(toConnectorAuthMethod(SAS), blobs:SAS);
-}
-
-// ---- toConnectorConfig forwarding -------------------------------------------
-
-@test:Config {}
-isolated function testToConnectorConfigForwardsIdentityAndAuth() {
-    ConnectionConfig config = {
-        accountName: "contosostorage",
-        accessKeyOrSAS: "sv=2022-11-02&sig=abc",
-        authorizationMethod: SAS
-    };
-    blobs:ConnectionConfig mapped = toConnectorConfig(config);
-    test:assertEquals(mapped.accountName, "contosostorage");
-    test:assertEquals(mapped.accessKeyOrSAS, "sv=2022-11-02&sig=abc");
-    test:assertEquals(mapped.authorizationMethod, blobs:SAS);
-    test:assertEquals(mapped.httpVersion, http:HTTP_1_1);
-    test:assertEquals(mapped.timeout, <decimal>30);
-}
-
-@test:Config {}
-isolated function testToConnectorConfigForwardsOptionalHttpOptions() {
-    ConnectionConfig config = {
-        accountName: "acct",
-        accessKeyOrSAS: "key",
-        authorizationMethod: ACCESS_KEY,
-        timeout: 45,
-        retryConfig: {count: 3, interval: 1},
-        proxy: {host: "proxy.example", port: 8080},
-        secureSocket: {enable: false}
-    };
-    blobs:ConnectionConfig mapped = toConnectorConfig(config);
-    test:assertEquals(mapped.authorizationMethod, blobs:ACCESS_KEY);
-    test:assertEquals(mapped.timeout, <decimal>45);
-    test:assertEquals(mapped.retryConfig?.count, 3);
-    test:assertEquals(mapped.proxy?.host, "proxy.example");
-    test:assertEquals(mapped.proxy?.port, 8080);
-    test:assertTrue(mapped.secureSocket is http:ClientSecureSocket);
-}
-
-@test:Config {}
-isolated function testToConnectorConfigOmitsUnsetOptionalOptions() {
-    ConnectionConfig config = {
-        accountName: "acct",
-        accessKeyOrSAS: "key",
-        authorizationMethod: ACCESS_KEY
-    };
-    blobs:ConnectionConfig mapped = toConnectorConfig(config);
-    test:assertTrue(mapped.retryConfig is (), "An unset retryConfig is not forwarded");
-    test:assertTrue(mapped.proxy is (), "An unset proxy is not forwarded");
-    test:assertTrue(mapped.circuitBreaker is (), "An unset circuitBreaker is not forwarded");
-}
-
 // ---- newBlobClient construction ---------------------------------------------
 
 @test:Config {}
 isolated function testNewBlobClientWithSas() returns error? {
-    ConnectionConfig config = {
+    blobs:ConnectionConfig config = {
         accountName: "contosostorage",
         accessKeyOrSAS: "sv=2022-11-02&ss=b&srt=co&sp=rl&sig=abc",
-        authorizationMethod: SAS
+        authorizationMethod: blobs:SAS
     };
     blobs:BlobClient _ = check newBlobClient(config);
 }
 
 @test:Config {}
 isolated function testNewBlobClientWithAccessKey() returns error? {
-    ConnectionConfig config = {
+    blobs:ConnectionConfig config = {
         accountName: "contosostorage",
         // A syntactically valid base64 access key; no network call is made at construction.
         accessKeyOrSAS: "dGhpcy1pcy1hLWZha2Uta2V5LWZvci10ZXN0aW5n",
-        authorizationMethod: ACCESS_KEY
+        authorizationMethod: blobs:ACCESS_KEY
     };
     blobs:BlobClient _ = check newBlobClient(config);
 }

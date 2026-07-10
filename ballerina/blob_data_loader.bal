@@ -33,7 +33,7 @@ public isolated class TextDataLoader {
     # + connectionConfig - The authentication and service configuration shared by all sources
     # + sources - One or more Azure Blob containers to load documents from
     # + return - An `ai:Error` if the loader could not be initialized
-    public isolated function init(@display {label: "Connection Configurations"} ConnectionConfig connectionConfig,
+    public isolated function init(@display {label: "Connection Configurations"} blobs:ConnectionConfig connectionConfig,
             @display {label: "Data Sources"} Source[] sources) returns ai:Error? {
         if sources.length() == 0 {
             return error ai:Error("At least one source must be provided to the Azure Blob Storage data loader");
