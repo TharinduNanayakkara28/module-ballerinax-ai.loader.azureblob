@@ -22,12 +22,12 @@ The acquisition layer — authentication, blob listing, download, and pagination
 
 ## Authentication
 
-Azure Blob Storage is accessed through the `ballerinax/azure_storage_service.blobs` connector, which supports two authorization mechanisms. Both are configured through `ConnectionConfig.accessKeyOrSAS` together with `ConnectionConfig.authorizationMethod`:
+Azure Blob Storage is accessed through the `ballerinax/azure_storage_service.blobs` connector, and the loader is initialized with that connector's `blobs:ConnectionConfig` directly. It supports two authorization mechanisms, both configured through `accessKeyOrSAS` together with `authorizationMethod`:
 
 | Mechanism | `authorizationMethod` | `accessKeyOrSAS` holds | Best for |
 | --- | --- | --- | --- |
-| Shared Access Signature (SAS) | `SAS` | A SAS token (the query string, e.g. `sv=...&sig=...`) | Scoped, time-limited, pre-signed access without sharing an account key |
-| Shared Key (account access key) | `ACCESS_KEY` | One of the storage account's access keys | Full-account, server-to-server access; the connector signs each request with HMAC-SHA256 |
+| Shared Access Signature (SAS) | `blobs:SAS` | A SAS token (the query string, e.g. `sv=...&sig=...`) | Scoped, time-limited, pre-signed access without sharing an account key |
+| Shared Key (account access key) | `blobs:ACCESS_KEY` | One of the storage account's access keys | Full-account, server-to-server access; the connector signs each request with HMAC-SHA256 |
 
 > **Note:** Azure AD / Microsoft Entra ID (OAuth2) is **not** supported in this version, as the underlying connector authorizes with Shared Key and SAS only.
 
@@ -38,14 +38,14 @@ The service endpoint is derived from the account name as `https://{accountName}.
 ### Initialization
 
 ```ballerina
-import ballerina/ai;
 import ballerinax/ai.azure.storage.blob;
+import ballerinax/azure_storage_service.blobs;
 
 final blob:TextDataLoader loader = check new (
     {
         accountName: "contosostorage",
         accessKeyOrSAS: "sv=2022-11-02&ss=b&srt=co&sp=rl&sig=...",
-        authorizationMethod: blob:SAS
+        authorizationMethod: blobs:SAS
     },
     [
         {
@@ -118,13 +118,15 @@ Each returned `ai:TextDocument` carries metadata including the full blob name (`
 
 ## Configuration reference
 
-### `ConnectionConfig`
+### `blobs:ConnectionConfig`
+
+The loader is configured with the `ballerinax/azure_storage_service.blobs` connector's `ConnectionConfig` record. Its most relevant fields are:
 
 | Field | Type | Default | Description |
 | --- | --- | --- | --- |
 | `accountName` | `string` | — | The Azure Storage account name; used to build the blob service endpoint |
 | `accessKeyOrSAS` | `string` | — | An account access key or a SAS token, interpreted per `authorizationMethod` |
-| `authorizationMethod` | `AuthorizationMethod` | — | `ACCESS_KEY` (Shared Key) or `SAS` |
+| `authorizationMethod` | `blobs:AuthorizationMethod` | — | `blobs:ACCESS_KEY` (Shared Key) or `blobs:SAS` |
 | `httpVersion` | `http:HttpVersion` | `http:HTTP_1_1` | HTTP version understood by the client |
 | `http2Settings` | `http:ClientHttp2Settings` | — | HTTP/2 protocol settings |
 | `timeout` | `decimal` | `30` | Response timeout, in seconds |

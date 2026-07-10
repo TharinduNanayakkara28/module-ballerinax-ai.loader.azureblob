@@ -22,7 +22,7 @@ import ballerinax/azure_storage_service.blobs;
 
 @test:Config {}
 isolated function testInitWithoutSourcesFails() {
-    ConnectionConfig config = {accountName: "acct", accessKeyOrSAS: "sas", authorizationMethod: SAS};
+    blobs:ConnectionConfig config = {accountName: "acct", accessKeyOrSAS: "sas", authorizationMethod: blobs:SAS};
     TextDataLoader|ai:Error loader = new (config, []);
     if loader is ai:Error {
         test:assertTrue(loader.message().includes("At least one source"), loader.message());
@@ -33,7 +33,7 @@ isolated function testInitWithoutSourcesFails() {
 
 @test:Config {}
 isolated function testInitWithSourcesSucceeds() returns error? {
-    ConnectionConfig config = {accountName: "acct", accessKeyOrSAS: "sas", authorizationMethod: SAS};
+    blobs:ConnectionConfig config = {accountName: "acct", accessKeyOrSAS: "sas", authorizationMethod: blobs:SAS};
     TextDataLoader _ = check new (config, [{container: "documents"}]);
 }
 
