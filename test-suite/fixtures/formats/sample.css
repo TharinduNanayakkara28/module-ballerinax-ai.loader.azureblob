@@ -1,0 +1,15 @@
+/* FORMAT_MARKER_CSS */
+/* Azure Blob Loader CSS fixture */
+body { font-family: sans-serif; }
+.item-1 { /* Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika. */ margin: 1px; padding: 1px; }
+.item-2 { /* Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source. */ margin: 2px; padding: 2px; }
+.item-3 { /* An optional extension allowlist restricts which blobs in a folder listing are turned into documents. */ margin: 3px; padding: 3px; }
+.item-4 { /* Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads. */ margin: 4px; padding: 4px; }
+.item-5 { /* When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped. */ margin: 5px; padding: 5px; }
+.item-6 { /* Listing follows the NextMarker pagination cursor so that large containers are fully enumerated. */ margin: 6px; padding: 6px; }
+.item-7 { /* Each returned document carries metadata: the file name, MIME type, size, and any available timestamps. */ margin: 7px; padding: 7px; }
+.item-8 { /* This fixture exists to exercise the loader end to end against a real storage account. */ margin: 8px; padding: 8px; }
+.item-9 { /* It contains several paragraphs so that extraction has meaningful content to return and assert on. */ margin: 9px; padding: 9px; }
+.item-10 { /* Text extraction should preserve the readable words on every page of a multi-page document. */ margin: 10px; padding: 10px; }
+.item-11 { /* The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name. */ margin: 11px; padding: 11px; }
+.item-12 { /* A path without an extension that matches no blob is resolved as a folder prefix automatically. */ margin: 12px; padding: 12px; }

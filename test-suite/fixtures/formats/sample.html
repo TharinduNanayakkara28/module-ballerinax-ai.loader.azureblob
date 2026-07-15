@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Azure Blob Loader HTML fixture</title></head>
+<body>
+  <h1>FORMAT_MARKER_HTML</h1>
+  <h2>Azure Blob Loader HTML fixture</h2>
+    <p>The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.</p>
+    <p>Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.</p>
+    <p>Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.</p>
+    <p>An optional extension allowlist restricts which blobs in a folder listing are turned into documents.</p>
+    <p>Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.</p>
+    <p>When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.</p>
+    <p>Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.</p>
+    <p>Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.</p>
+    <p>This fixture exists to exercise the loader end to end against a real storage account.</p>
+    <p>It contains several paragraphs so that extraction has meaningful content to return and assert on.</p>
+    <p>Text extraction should preserve the readable words on every page of a multi-page document.</p>
+    <p>The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.</p>
+    <p>A path without an extension that matches no blob is resolved as a folder prefix automatically.</p>
+    <p>Content is intentionally verbose to make the extracted output realistic rather than trivial.</p>
+    <p>Downstream retrieval-augmented generation pipelines consume these text documents as context.</p>
+</body>
+</html>

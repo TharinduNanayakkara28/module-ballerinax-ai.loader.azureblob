@@ -1,0 +1,554 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R] /Count 12 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1391 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 1) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 1 of 12.) Tj
+T*
+() Tj
+T*
+([1.1] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([1.2] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([1.3] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([1.4] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([1.5] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([1.6] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([1.7] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([1.8] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([1.9] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([1.10] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([1.11] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1379 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 2) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 2 of 12.) Tj
+T*
+() Tj
+T*
+([2.1] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([2.2] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([2.3] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([2.4] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([2.5] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([2.6] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([2.7] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([2.8] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([2.9] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([2.10] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([2.11] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 1361 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 3) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 3 of 12.) Tj
+T*
+() Tj
+T*
+([3.1] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([3.2] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([3.3] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([3.4] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([3.5] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([3.6] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([3.7] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([3.8] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([3.9] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([3.10] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([3.11] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 1353 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 4) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 4 of 12.) Tj
+T*
+() Tj
+T*
+([4.1] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([4.2] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([4.3] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([4.4] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([4.5] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([4.6] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([4.7] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([4.8] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([4.9] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([4.10] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([4.11] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 1362 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 5) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 5 of 12.) Tj
+T*
+() Tj
+T*
+([5.1] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([5.2] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([5.3] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([5.4] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([5.5] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([5.6] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([5.7] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([5.8] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([5.9] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([5.10] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([5.11] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 15 0 R >>
+endobj
+15 0 obj
+<< /Length 1360 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 6) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 6 of 12.) Tj
+T*
+() Tj
+T*
+([6.1] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([6.2] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([6.3] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([6.4] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([6.5] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([6.6] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([6.7] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([6.8] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([6.9] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([6.10] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([6.11] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 17 0 R >>
+endobj
+17 0 obj
+<< /Length 1375 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 7) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 7 of 12.) Tj
+T*
+() Tj
+T*
+([7.1] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([7.2] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([7.3] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([7.4] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([7.5] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([7.6] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([7.7] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([7.8] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([7.9] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([7.10] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([7.11] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 19 0 R >>
+endobj
+19 0 obj
+<< /Length 1373 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 8) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 8 of 12.) Tj
+T*
+() Tj
+T*
+([8.1] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([8.2] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([8.3] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([8.4] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([8.5] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([8.6] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([8.7] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([8.8] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([8.9] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([8.10] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([8.11] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 21 0 R >>
+endobj
+21 0 obj
+<< /Length 1387 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 9) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 9 of 12.) Tj
+T*
+() Tj
+T*
+([9.1] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([9.2] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([9.3] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([9.4] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([9.5] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([9.6] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([9.7] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([9.8] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([9.9] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([9.10] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([9.11] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 23 0 R >>
+endobj
+23 0 obj
+<< /Length 1411 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 10) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 10 of 12.) Tj
+T*
+() Tj
+T*
+([10.1] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([10.2] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([10.3] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([10.4] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([10.5] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([10.6] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([10.7] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([10.8] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([10.9] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([10.10] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([10.11] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+ET
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 25 0 R >>
+endobj
+25 0 obj
+<< /Length 1416 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 11) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 11 of 12.) Tj
+T*
+() Tj
+T*
+([11.1] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([11.2] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([11.3] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([11.4] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([11.5] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([11.6] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([11.7] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([11.8] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([11.9] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([11.10] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([11.11] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+ET
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 27 0 R >>
+endobj
+27 0 obj
+<< /Length 1474 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Quarterly Report - Section 12) Tj
+T*
+(Multi-page PDF fixture marker.) Tj
+T*
+(Page 12 of 12.) Tj
+T*
+() Tj
+T*
+([12.1] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([12.2] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([12.3] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([12.4] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([12.5] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([12.6] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([12.7] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([12.8] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([12.9] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([12.10] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([12.11] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+() Tj
+T*
+(Final page sentinel: PDF_LAST_PAGE.) Tj
+ET
+endstream
+endobj
+xref
+0 28
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000197 00000 n 
+0000000267 00000 n 
+0000000393 00000 n 
+0000001836 00000 n 
+0000001962 00000 n 
+0000003393 00000 n 
+0000003519 00000 n 
+0000004932 00000 n 
+0000005060 00000 n 
+0000006466 00000 n 
+0000006594 00000 n 
+0000008009 00000 n 
+0000008137 00000 n 
+0000009550 00000 n 
+0000009678 00000 n 
+0000011106 00000 n 
+0000011234 00000 n 
+0000012660 00000 n 
+0000012788 00000 n 
+0000014228 00000 n 
+0000014356 00000 n 
+0000015820 00000 n 
+0000015948 00000 n 
+0000017417 00000 n 
+0000017545 00000 n 
+trailer
+<< /Size 28 /Root 1 0 R >>
+startxref
+19072
+%%EOF

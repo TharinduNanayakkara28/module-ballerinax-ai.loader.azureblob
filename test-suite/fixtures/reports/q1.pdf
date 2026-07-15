@@ -1,0 +1,108 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1485 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Single-Document PDF Fixture) Tj
+T*
+(Mock PDF document text.) Tj
+T*
+() Tj
+T*
+([1.1] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+T*
+([1.2] Plain-text formats are decoded directly from their bytes, while PDF documents are parsed with Apache Tika.) Tj
+T*
+([1.3] Virtual folders are expressed as slashes in the blob name, and recursion can be enabled per configured source.) Tj
+T*
+([1.4] An optional extension allowlist restricts which blobs in a folder listing are turned into documents.) Tj
+T*
+([1.5] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([1.6] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([1.7] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([1.8] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([1.9] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([1.10] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([1.11] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([1.12] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1429 >>
+stream
+BT
+/F1 11 Tf
+54 740 Td
+15 TL
+(Single-Document PDF Fixture \(continued\)) Tj
+T*
+() Tj
+T*
+([2.1] Unsupported binaries such as images and Microsoft Office documents are skipped during folder loads.) Tj
+T*
+([2.2] When a blob is named explicitly, a deliberately unsupported type is reported as an error instead of skipped.) Tj
+T*
+([2.3] Listing follows the NextMarker pagination cursor so that large containers are fully enumerated.) Tj
+T*
+([2.4] Each returned document carries metadata: the file name, MIME type, size, and any available timestamps.) Tj
+T*
+([2.5] This fixture exists to exercise the loader end to end against a real storage account.) Tj
+T*
+([2.6] It contains several paragraphs so that extraction has meaningful content to return and assert on.) Tj
+T*
+([2.7] Text extraction should preserve the readable words on every page of a multi-page document.) Tj
+T*
+([2.8] The loader treats a path with a trailing slash as a folder prefix rather than an exact blob name.) Tj
+T*
+([2.9] A path without an extension that matches no blob is resolved as a folder prefix automatically.) Tj
+T*
+([2.10] Content is intentionally verbose to make the extracted output realistic rather than trivial.) Tj
+T*
+([2.11] Downstream retrieval-augmented generation pipelines consume these text documents as context.) Tj
+T*
+([2.12] The Azure Blob Storage data loader retrieves documents from one or more containers and returns them as text.) Tj
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000197 00000 n 
+0000000323 00000 n 
+0000001860 00000 n 
+0000001986 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+3467
+%%EOF

@@ -1,0 +1,12 @@
+# Copy this file to `tests/Config.toml` and fill in your values.
+#
+# IMPORTANT: with this Ballerina distribution, `bal test` reads Config.toml from the
+# `tests/` directory (NOT the package root). Keep this file at `tests/Config.toml`.
+# It is git-ignored.
+#
+# The suite reads pre-uploaded fixtures from `testContainer`; it does not create or
+# upload anything. Upload the files under `test-suite/fixtures/` first (see README.md).
+accountName    = "<your-storage-account-name>"
+accessKeyOrSAS = "<your-access-key-or-sas-token>"   # copy the CURRENT key: Portal > Storage account > Access keys
+authMethod     = "ACCESS_KEY"                        # "ACCESS_KEY" or "SAS" (SAS needs read/list rights)
+testContainer  = "loader-test-suite"                 # the dedicated container holding the fixtures
