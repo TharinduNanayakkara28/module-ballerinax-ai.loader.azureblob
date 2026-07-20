@@ -74,14 +74,27 @@ isolated function buildManifest() returns Fixture[] {
     fixtures.push({name: "reports/q1.pdf", supported: true, marker: SINGLE_PDF_MARKER});
     fixtures.push({name: "reports/2026/deep.txt", supported: true, marker: "REPORTS_DEEP"});
 
-    // Unsupported binaries / Office documents (skipped in folder loads).
+    // office/: Microsoft Office text extraction via Apache POI. .docx/.xlsx/.pptx exercise
+    // the OOXML parser; .doc/.xls/.ppt the legacy OLE2 parser. All are now EXTRACTABLE.
+    fixtures.push({name: "office/report.docx", supported: true, marker: "OFFICE_MARKER_DOCX"});
+    fixtures.push({name: "office/report.xlsx", supported: true, marker: "OFFICE_MARKER_XLSX"});
+    fixtures.push({name: "office/report.pptx", supported: true, marker: "OFFICE_MARKER_PPTX"});
+    fixtures.push({name: "office/legacy.doc", supported: true, marker: "OFFICE_MARKER_DOC"});
+    fixtures.push({name: "office/legacy.xls", supported: true, marker: "OFFICE_MARKER_XLS"});
+    fixtures.push({name: "office/legacy.ppt", supported: true, marker: "OFFICE_MARKER_PPT"});
+
+    // A scanned (image-only) PDF: parses but has no text layer, so the loader skips it in
+    // listings (with a warning) and errors when it is named explicitly. OCR is not supported.
+    fixtures.push({name: "scanned.pdf", supported: false});
+
+    // Unsupported binary: skipped in folder loads, errored when named explicitly.
     fixtures.push({name: "photo.png", supported: false});
-    fixtures.push({name: "report.docx", supported: false});
-    fixtures.push({name: "sheet.xlsx", supported: false});
-    fixtures.push({name: "slides.pptx", supported: false});
 
     return fixtures;
 }
+
+// The sentinel phrase in the error a named scanned (image-only) PDF surfaces.
+const string SCANNED_PDF_SENTINEL = "no extractable text layer";
 
 // ---- expectation helpers ----------------------------------------------------
 

@@ -107,16 +107,12 @@ public isolated class TextDataLoader {
         blobs:BlobResult|error blob = self.blobClient->getBlob(container, normalized, ());
         if blob is blobs:BlobResult {
             // An explicitly named blob is always loaded, regardless of the extension filter.
-            // A deliberately named non-text blob is an error, unlike folder contents.
+            // A deliberately named non-text blob is an error, unlike folder contents; a named
+            // scanned (image-only) PDF surfaces the descriptive error from `buildDocument`.
             string? contentType = blob.properties?.blobContentType;
             ai:TextDocument? document = check buildDocument(blob.blobContent, normalized, contentType,
                     <decimal>blob.blobContent.length(), (), ());
             if document is () {
-                if isUnsupportedOfficeDocument(normalized, contentType) {
-                    return error ai:Error(string `Unsupported file type for path '${rawPath}': text ` +
-                        string `extraction for Microsoft Office documents (.doc, .docx, .ppt, .pptx, ` +
-                        string `.xls, .xlsx) is not supported`);
-                }
                 return error ai:Error(string `Unsupported (non-text) file type for path '${rawPath}'`);
             }
             return [document];
@@ -137,9 +133,10 @@ public isolated class TextDataLoader {
         return self.listPrefix(container, normalized + "/", recursive, includeExtensions, tolerateMissing);
     }
 
-    // Lists every blob under a prefix and converts the text/PDF ones into documents. Under
-    // `recursive`, blobs at any depth are included; otherwise only those directly under the
-    // prefix. Unsupported blobs are skipped with a warning (never an error inside a listing).
+    // Lists every blob under a prefix and converts the text/PDF/Office ones into documents.
+    // Under `recursive`, blobs at any depth are included; otherwise only those directly under
+    // the prefix. Unsupported blobs (and scanned image-only PDFs) are skipped with a warning
+    // (never an error inside a listing).
     private isolated function listPrefix(string container, string prefix, boolean recursive,
             string[]? includeExtensions, boolean tolerateMissing) returns ai:Document[]|ai:Error {
         blobs:Blob[]|error blobList = self.listAllBlobs(container, prefix);
@@ -166,13 +163,20 @@ public isolated class TextDataLoader {
             if !matchesExtensionFilter(name, includeExtensions) {
                 continue;
             }
-            ai:TextDocument? document = check self.toDocument(container, entry);
+            ai:TextDocument?|ai:Error document = self.toDocument(container, entry);
+            if document is ai:Error {
+                // A scanned (image-only) PDF has no text to extract; inside a listing it is
+                // skipped like other non-text content rather than aborting the whole walk.
+                // (An explicitly named scanned PDF still surfaces this error to the caller.)
+                if isScannedPdfError(document) {
+                    log:printWarn("Skipping a scanned (image-only) PDF: it has no extractable " +
+                            "text layer, and OCR is not supported", fileName = name, container = container);
+                    continue;
+                }
+                return document;
+            }
             if document is ai:TextDocument {
                 documents.push(document);
-            } else if isUnsupportedOfficeDocument(name, entry.contentType) {
-                log:printWarn("Skipping an unsupported Azure Blob Storage file: text extraction for " +
-                        "Microsoft Office documents (.doc, .docx, .ppt, .pptx, .xls, .xlsx) is not supported",
-                        fileName = name, container = container);
             } else {
                 log:printWarn("Skipping a non-text Azure Blob Storage file",
                         fileName = name, container = container);

@@ -22,20 +22,16 @@ import ballerina/time;
 enum DocumentKind {
     // Inherently textual; decoded directly from its bytes.
     PLAIN_TEXT,
-    // A PDF document whose text is extracted via Apache Tika.
+    // A PDF or Microsoft Office document whose text is extracted via Apache Tika
+    // (PDFBox for PDF, Apache POI for Office).
     EXTRACTABLE,
-    // A Microsoft Office document (.doc/.docx/.ppt/.pptx/.xls/.xlsx). This loader
-    // extracts text from PDFs only and does not support Office formats (see the
-    // OFFICE_* lists / classify), so these are skipped in folder loads and rejected
-    // with a clear, format-specific error when named explicitly.
-    UNSUPPORTED_OFFICE,
     // Cannot be represented as text (images, audio, unknown binary); skipped.
     UNSUPPORTED
 }
 
-// Builds an `ai:TextDocument` from downloaded blob content, extracting the text of
-// PDF documents via Apache Tika. Returns `()` for content that cannot be represented
-// as text (images, audio, Office documents, unknown binary), signalling the caller to skip.
+// Builds an `ai:TextDocument` from downloaded blob content, extracting the text of PDF
+// and Microsoft Office documents via Apache Tika. Returns `()` for content that cannot be
+// represented as text (images, audio, unknown binary), signalling the caller to skip.
 isolated function buildDocument(byte[] content, string fileName, string? mimeType, decimal? fileSize,
         string? createdDateTime, string? modifiedDateTime) returns ai:TextDocument?|ai:Error {
     ai:Metadata metadata = {fileName};
@@ -64,7 +60,7 @@ isolated function buildDocument(byte[] content, string fileName, string? mimeTyp
             return {content: text, metadata};
         }
         EXTRACTABLE => {
-            string|error text = extractText(content, fileName);
+            string|error text = extractText(content, fileName, mimeType ?: "");
             if text is error {
                 return error ai:Error(
                     string `Failed to extract text from '${fileName}': ${text.message()}`, text);
@@ -75,13 +71,28 @@ isolated function buildDocument(byte[] content, string fileName, string? mimeTyp
     return ();
 }
 
-// Extracts plain text from a PDF document using Apache Tika, reading directly from the
-// in-memory bytes (no temporary file). `fileName` is passed as a Tika resource-name hint.
-// Returns an `error` if the content cannot be parsed.
-isolated function extractText(byte[] content, string fileName) returns string|error = @java:Method {
+// Extracts plain text from a PDF or Microsoft Office document using Apache Tika, reading
+// directly from the in-memory bytes (no temporary file). `fileName` is passed as a Tika
+// resource-name hint and used to select the parser; `mimeType` ("" if unknown) is the
+// fallback selector for extension-less blobs, since Azure Blob listings surface a real
+// Content-Type and `classify` may deem a blob extractable from its MIME type alone.
+// Returns an `error` if the content cannot be parsed, or if a PDF has no extractable
+// text layer (a scanned/image-only file).
+isolated function extractText(byte[] content, string fileName, string mimeType)
+        returns string|error = @java:Method {
     'class: "io.ballerina.lib.ai.azure.storage.blob.TextExtractor",
     name: "extractText"
 } external;
+
+// The sentinel phrase the native extractor embeds when a PDF parses successfully but has
+// no text layer — a scanned / image-only document (mirrors TextExtractor.SCANNED_PDF_MESSAGE).
+const string SCANNED_PDF_SENTINEL = "no extractable text layer";
+
+// Reports whether an error denotes a scanned (image-only) PDF. The loader uses this to
+// skip such files in prefix listings (with a warning) — like other non-text content —
+// while an explicitly named scanned PDF surfaces the descriptive error to the caller.
+isolated function isScannedPdfError(error err) returns boolean =>
+    err.message().includes(SCANNED_PDF_SENTINEL);
 
 // Classifies a file by how its text is obtained, using MIME type then extension.
 isolated function classify(string fileName, string? mimeType) returns DocumentKind {
@@ -91,26 +102,13 @@ isolated function classify(string fileName, string? mimeType) returns DocumentKi
             || TEXT_EXTENSIONS.indexOf(extension) !is () {
         return PLAIN_TEXT;
     }
-    // Microsoft Office documents are recognised so they can be rejected with a clear,
-    // format-specific message: this loader extracts text from PDFs (and natively textual
-    // files) only and does not ship the Apache POI stack, so Office formats are skipped in
-    // folder loads and rejected when named explicitly.
-    if (mime != "" && OFFICE_MIME_TYPES.indexOf(mime) !is ())
-            || OFFICE_EXTENSIONS.indexOf(extension) !is () {
-        return UNSUPPORTED_OFFICE;
-    }
+    // PDF and Microsoft Office documents are extracted via Apache Tika (PDFBox / POI).
     if (mime != "" && EXTRACTABLE_MIME_TYPES.indexOf(mime) !is ())
             || EXTRACTABLE_EXTENSIONS.indexOf(extension) !is () {
         return EXTRACTABLE;
     }
     return UNSUPPORTED;
 }
-
-// Reports whether a file is a Microsoft Office document, which this loader does not
-// support (see `OFFICE_*` lists / `classify`). Such files are skipped in folder loads
-// and rejected with an error when named explicitly.
-isolated function isUnsupportedOfficeDocument(string fileName, string? mimeType) returns boolean =>
-    classify(fileName, mimeType) == UNSUPPORTED_OFFICE;
 
 // Returns the lower-cased file extension (without the dot), or `""` if none.
 isolated function getExtension(string fileName) returns string {
@@ -235,22 +233,10 @@ final readonly & string[] TEXT_EXTENSIONS = [
     "yaml", "yml", "log", "ini", "conf", "properties", "css", "js", "ts"
 ];
 
-// MIME types whose text is extracted via Apache Tika. PDF only — this loader does not
-// support Office formats (see `OFFICE_*`).
+// MIME types whose text is extracted via Apache Tika: PDF (PDFBox) and Microsoft
+// Office documents (POI, via the `tika-parser-microsoft-module`).
 final readonly & string[] EXTRACTABLE_MIME_TYPES = [
-    "application/pdf"
-];
-
-// File extensions whose text is extracted via Apache Tika. PDF only — this loader does
-// not support Office formats (see `OFFICE_*`).
-final readonly & string[] EXTRACTABLE_EXTENSIONS = [
-    "pdf"
-];
-
-// Microsoft Office MIME types. This loader extracts text from PDFs only and does not ship
-// the Apache POI stack, so these formats are recognised solely to skip them (folder loads)
-// or to reject them with a clear, format-specific error (explicitly named paths).
-final readonly & string[] OFFICE_MIME_TYPES = [
+    "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "application/vnd.ms-powerpoint",
@@ -259,7 +245,7 @@ final readonly & string[] OFFICE_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 ];
 
-// Microsoft Office file extensions, unsupported by this loader (see above).
-final readonly & string[] OFFICE_EXTENSIONS = [
-    "doc", "docx", "ppt", "pptx", "xls", "xlsx"
+// File extensions whose text is extracted via Apache Tika: PDF and Microsoft Office.
+final readonly & string[] EXTRACTABLE_EXTENSIONS = [
+    "pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"
 ];

@@ -1,6 +1,6 @@
 # Ballerina Azure Blob Storage Data Loader
 
-The `ballerinax/ai.azure.storage.blob` module provides a `TextDataLoader` that retrieves documents from Azure Blob Storage containers and returns them as `ai:TextDocument` values, ready to be chunked, embedded, and indexed by the [Ballerina AI](https://central.ballerina.io/ballerina/ai) module. Inherently textual blobs are decoded directly, while PDF documents have their text extracted with Apache Tika.
+The `ballerinax/ai.azure.storage.blob` module provides a `TextDataLoader` that retrieves documents from Azure Blob Storage containers and returns them as `ai:TextDocument` values, ready to be chunked, embedded, and indexed by the [Ballerina AI](https://central.ballerina.io/ballerina/ai) module. Inherently textual blobs are decoded directly, while PDF and Microsoft Office documents have their text extracted with Apache Tika (PDFBox for PDF, Apache POI for Office).
 
 It implements the `ai:DataLoader` abstraction, so it can be used anywhere an `ai:DataLoader` is expected (for example, in a Retrieval-Augmented Generation ingestion pipeline).
 
@@ -14,11 +14,20 @@ The acquisition layer — authentication, blob listing, download, and pagination
 - Follows the `NextMarker` cursor to page through large containers automatically.
 - Returns every blob as an `ai:TextDocument`, based on its MIME type / extension:
   - Inherently textual blobs (e.g. `txt`, `md`, `html`, `json`, `csv`, `xml`) are decoded directly.
-  - `pdf` blobs have their text extracted with Apache Tika.
+  - `pdf` blobs have their text extracted with Apache Tika (PDFBox).
+  - Microsoft Office documents (`.doc`, `.docx`, `.ppt`, `.pptx`, `.xls`, `.xlsx`) have their text
+    extracted with Apache Tika (Apache POI) — both by extension and by their Office MIME types
+    reported in blob listings.
   - Other blobs that cannot be represented as text (e.g. images, audio, archives) are skipped with a
     logged warning; explicitly naming such a blob as a path is an error.
-  - Microsoft Office documents (`.doc`, `.docx`, `.ppt`, `.pptx`, `.xls`, `.xlsx`) are **not** supported —
-    they are skipped in folder listings and rejected with an error when named explicitly.
+  - A **scanned (image-only) PDF** — one that parses but has no text layer — is skipped with a logged
+    warning in folder listings, and surfaces a descriptive error when named explicitly. **OCR is not
+    supported** (see the limitation below).
+
+> **No OCR.** Scanned PDFs are detected and reported, not read: extracting their text requires OCR,
+> which this loader does not ship. Two future paths exist — Tesseract via Tika's OCR module (requires
+> the native `tesseract` binary installed on every host) or a managed service such as Azure AI
+> Document Intelligence.
 
 ## Authentication
 
@@ -71,7 +80,7 @@ Azure Blob Storage has no real folders: a container holds a flat set of blobs, a
 
 - **A path with a trailing `/`, or the container root (`/`)** is treated as a virtual folder and listed by prefix.
 - **A path without a trailing `/`** is first tried as an explicitly named blob. If an exact blob exists it is loaded directly (and always loaded, regardless of the extension filter). If no such blob exists, the path is treated as a virtual folder — unless it looks like a file (has an extension), in which case a missing blob is reported as an error to help catch typos.
-- **A deliberately named non-text blob** (an image, an Office document, etc.) is an **error**, whereas the same blob discovered while listing a folder is skipped with a warning.
+- **A deliberately named non-text blob** (an image, an archive, a scanned PDF, etc.) is an **error**, whereas the same blob discovered while listing a folder is skipped with a warning.
 
 `paths` defaults to `["/"]`, so a `Source` with only a `container` loads the whole container; set `paths` to `[]` to load nothing.
 

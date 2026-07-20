@@ -47,8 +47,16 @@ The layout that gets created:
 | `book.pdf` | **12-page** PDF — proves >10-page extraction |
 | `reports/q1.txt`, `reports/q1.pdf` | direct children (recursion) |
 | `reports/2026/deep.txt` | nested child (recursion) |
+| `office/report.{docx,xlsx,pptx}` | Microsoft Office (OOXML) text extraction via Apache POI |
+| `office/legacy.{doc,xls,ppt}` | legacy OLE2 Office text extraction via Apache POI |
+| `scanned.pdf` | image-only PDF — skipped in listings, errors when named (no OCR) |
 | `photo.png` | unsupported image (skipped / errors when named) |
-| `report.docx`, `sheet.xlsx`, `slides.pptx` | unsupported Office (skipped / errors when named) |
+
+> **Re-uploading after the Office/scanned-PDF upgrade:** if you previously uploaded the
+> earlier fixture set, delete the old placeholder `report.docx`, `sheet.xlsx`, `slides.pptx`
+> from the container root and upload the new `office/` folder (6 files) and `scanned.pdf`.
+> A fresh `az storage blob upload-batch ... --source fixtures --overwrite` uploads everything;
+> just remember to remove the three stale root Office blobs so the exact-count tests pass.
 
 ## 3. Configure
 

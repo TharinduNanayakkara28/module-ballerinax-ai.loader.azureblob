@@ -110,8 +110,9 @@ isolated function assertExactly(ai:Document[] docs, Fixture[] expected, string c
 isolated function testLoadWholeContainerRecursive() returns error? {
     ai:Document[] docs = check loadAll([srcOf(["/"], recursive = true)]);
     assertExactly(docs, expectedSupported("", true), "whole container (recursive)");
-    // Unsupported files must be skipped, never surfaced.
-    foreach string name in ["photo.png", "report.docx", "sheet.xlsx", "slides.pptx"] {
+    // The image and the scanned (image-only) PDF must be skipped, never surfaced;
+    // the six Office documents under office/ ARE now loaded (see assertExactly above).
+    foreach string name in ["photo.png", "scanned.pdf"] {
         test:assertTrue(contentOf(docs, name) is (), string `unsupported '${name}' must be skipped`);
     }
 }
@@ -239,17 +240,57 @@ isolated function testMetadataPopulated() returns error? {
     }
 }
 
-// ---- error paths -------------------------------------------------------------
+// ---- Microsoft Office extraction ---------------------------------------------
 
 @test:Config {groups: ["integration"]}
-isolated function testExplicitOfficeFileErrors() {
-    ai:Document[]|ai:Error result = loadAll([srcOf(["report.docx"])]);
+isolated function testOfficeFolderExtractsAllFormats() returns error? {
+    // A load of office/ extracts every Office format via Apache POI — the OOXML
+    // (.docx/.xlsx/.pptx) and legacy OLE2 (.doc/.xls/.ppt) parsers.
+    ai:Document[] docs = check loadAll([srcOf(["office/"], recursive = true)]);
+    Fixture[] expected = expectedSupported("office/", true);
+    test:assertEquals(expected.length(), 6, "six Office fixtures expected");
+    assertExactly(docs, expected, "office/ (all Office formats)");
+}
+
+@test:Config {groups: ["integration"]}
+isolated function testNamedOfficeDocxExtracts() returns error? {
+    // A named Office document is extracted via Apache POI, exactly like a PDF.
+    ai:Document[] docs = check loadAll([srcOf(["office/report.docx"])]);
+    test:assertEquals(docs.length(), 1);
+    string? content = contentOf(docs, "office/report.docx");
+    test:assertTrue(content is string && content.includes("OFFICE_MARKER_DOCX"), "docx extracted");
+}
+
+@test:Config {groups: ["integration"]}
+isolated function testNamedLegacyOfficeXlsExtracts() returns error? {
+    // Legacy OLE2 .xls exercises POI's OfficeParser.
+    ai:Document[] docs = check loadAll([srcOf(["office/legacy.xls"])]);
+    string? content = contentOf(docs, "office/legacy.xls");
+    test:assertTrue(content is string && content.includes("OFFICE_MARKER_XLS"), "xls extracted");
+}
+
+// ---- scanned (image-only) PDF ------------------------------------------------
+
+@test:Config {groups: ["integration"]}
+isolated function testNamedScannedPdfErrors() {
+    // A scanned PDF named explicitly surfaces a descriptive error (never an empty document).
+    ai:Document[]|ai:Error result = loadAll([srcOf(["scanned.pdf"])]);
     if result is ai:Error {
-        test:assertTrue(result.message().includes("Microsoft Office"), result.message());
+        test:assertTrue(result.message().includes(SCANNED_PDF_SENTINEL), result.message());
     } else {
-        test:assertFail("an explicitly named Office document should error");
+        test:assertFail("an explicitly named scanned PDF should error");
     }
 }
+
+@test:Config {groups: ["integration"]}
+isolated function testScannedPdfSkippedInListing() returns error? {
+    // In a whole-container listing the scanned PDF is skipped (warn), not an error, and
+    // never surfaces as a document.
+    ai:Document[] docs = check loadAll([srcOf(["/"], recursive = true)]);
+    test:assertTrue(contentOf(docs, "scanned.pdf") is (), "scanned PDF skipped in listing");
+}
+
+// ---- error paths -------------------------------------------------------------
 
 @test:Config {groups: ["integration"]}
 isolated function testExplicitImageErrors() {

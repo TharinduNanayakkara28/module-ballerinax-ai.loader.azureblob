@@ -21,7 +21,7 @@
 // the loader across every configuration case, asserts the results, then deletes what it
 // created. See `tests/` for the scenarios and `Config.toml.template` for setup.
 
-import ballerinax/ai.azure.storage.blob;
+import ballerinax/azure_storage_service.blobs;
 
 // Read from Config.toml (see Config.toml.template).
 configurable string accountName = ?;
@@ -29,9 +29,11 @@ configurable string accessKeyOrSAS = ?;
 configurable string authMethod = "ACCESS_KEY";
 configurable string testContainer = "loader-test-suite";
 
-// The connection configuration passed to the loader under test.
-isolated function connectionConfig() returns blob:ConnectionConfig => {
+// The connection configuration passed to the loader under test. The loader's `init`
+// takes the connector's `blobs:ConnectionConfig` directly, so it is constructed via the
+// connector module (the loader does not re-export a config type).
+isolated function connectionConfig() returns blobs:ConnectionConfig => {
     accountName,
     accessKeyOrSAS,
-    authorizationMethod: authMethod == "SAS" ? blob:SAS : blob:ACCESS_KEY
+    authorizationMethod: authMethod == "SAS" ? blobs:SAS : blobs:ACCESS_KEY
 };

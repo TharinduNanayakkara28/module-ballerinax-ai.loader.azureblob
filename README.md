@@ -5,7 +5,7 @@ as `ai:TextDocument` values for the Ballerina AI module (chunking, embedding, RA
 
 - **Package:** `ballerinax/ai.azure.storage.blob`
 - **Acquisition layer:** the [`ballerinax/azure_storage_service.blobs`](https://central.ballerina.io/ballerinax/azure_storage_service.blobs) connector (auth, listing, download, pagination).
-- **Text extraction:** direct decode for textual blobs; Apache Tika for PDFs.
+- **Text extraction:** direct decode for textual blobs; Apache Tika for PDFs (PDFBox) and Microsoft Office documents (Apache POI). Scanned (image-only) PDFs are detected and skipped/reported — OCR is not supported.
 - **Authentication:** Shared Access Signature (SAS) and Shared Key (account access key). Azure AD / OAuth2 is not supported in this version.
 
 See the [module README](ballerina/README.md) for the full usage guide and configuration

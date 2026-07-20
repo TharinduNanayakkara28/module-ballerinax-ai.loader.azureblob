@@ -25,11 +25,13 @@ dependencies {
     // Provided by the Ballerina runtime at execution time.
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
 
-    // Apache Tika: text extraction for PDF documents. Compiled against here; the
-    // same jars are declared as platform dependencies in Ballerina.toml. The Office
-    // (POI) stack is intentionally not used — this loader extracts text from PDFs only.
+    // Apache Tika: text extraction for PDF and Microsoft Office documents. Compiled
+    // against here; the same jars (plus the POI runtime stack) are declared as platform
+    // dependencies in Ballerina.toml. The pdf-module provides PDFBox (PDFParser); the
+    // microsoft-module provides POI (OOXMLParser / OfficeParser).
     implementation group: 'org.apache.tika', name: 'tika-core', version: "${tikaVersion}"
     implementation group: 'org.apache.tika', name: 'tika-parser-pdf-module', version: "${tikaVersion}"
+    implementation group: 'org.apache.tika', name: 'tika-parser-microsoft-module', version: "${tikaVersion}"
 }
 
 java {
