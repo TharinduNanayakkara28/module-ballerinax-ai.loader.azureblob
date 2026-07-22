@@ -139,7 +139,7 @@ isolated function matchesExtensionFilter(string fileName, string[]? includeExten
 
 // Parses an ISO 8601 timestamp into `time:Utc`, or `()` if absent/unparseable.
 // Azure's List Blobs XML reports `Creation-Time`/`Last-Modified` in RFC 1123 form, which
-// `time:utcFromString` does not accept, so those are dropped gracefully (see the README).
+// `time:utcFromString` does not accept, so those are dropped gracefully.
 isolated function toUtc(string? dateTime) returns time:Utc? {
     if dateTime is () {
         return ();

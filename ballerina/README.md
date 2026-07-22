@@ -31,7 +31,7 @@ The acquisition layer — authentication, blob listing, download, and pagination
 
 ## Authentication
 
-Azure Blob Storage is accessed through the `ballerinax/azure_storage_service.blobs` connector, and the loader is initialized with that connector's `blobs:ConnectionConfig` directly. It supports two authorization mechanisms, both configured through `accessKeyOrSAS` together with `authorizationMethod`:
+Azure Blob Storage is accessed through the `ballerinax/azure_storage_service.blobs` connector, and the loader is initialized with that connector's `blobs:ConnectionConfig` directly (or with an existing `blobs:BlobClient` — see [Reusing an existing client](#reusing-an-existing-client)). It supports two authorization mechanisms, both configured through `accessKeyOrSAS` together with `authorizationMethod`:
 
 | Mechanism | `authorizationMethod` | `accessKeyOrSAS` holds | Best for |
 | --- | --- | --- | --- |
@@ -73,6 +73,22 @@ final blob:TextDataLoader loader = check new (
     ]
 );
 ```
+
+### Reusing an existing client
+
+If the application already holds a `blobs:BlobClient`, pass it in place of the `blobs:ConnectionConfig` rather than having the loader construct a second one:
+
+```ballerina
+final blobs:BlobClient blobClient = check new ({
+    accountName: "contosostorage",
+    accessKeyOrSAS: "sv=2022-11-02&ss=b&srt=co&sp=rl&sig=...",
+    authorizationMethod: blobs:SAS
+});
+
+final blob:TextDataLoader loader = check new (blobClient, [{container: "documents"}]);
+```
+
+This shares one connection pool across every loader (and any other connector use) built on that client. A client supplied this way is **not** owned by the loader: the caller remains responsible for its lifecycle.
 
 ### The container / prefix model
 

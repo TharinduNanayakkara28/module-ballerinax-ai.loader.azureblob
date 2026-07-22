@@ -15,7 +15,7 @@
 // under the License.
 
 # A rule selecting what to load from one Azure Blob container. Several may be configured
-# per loader. A container is the unit of addressing (analogous to a SharePoint library):
+# per loader. A container is the unit of addressing :
 # there is no site/library chain, so a container maps directly to a `Source`.
 public type Source record {|
     # The container name to read from, or `"*"` for every container in the account.
@@ -32,7 +32,7 @@ public type Source record {|
 |};
 
 // A normalized listing entry, decoupled from the connector's `Blob` record (whose
-// `Properties` are an untyped `map<json>`). The loader (Phase 3) reads the connector's
+// `Properties` are an untyped `map<json>`). The loader reads the connector's
 // blob metadata into this shape before building an `ai:TextDocument`.
 
 # A single blob discovered while listing a container prefix.

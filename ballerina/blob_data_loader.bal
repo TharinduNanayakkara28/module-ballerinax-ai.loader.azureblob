@@ -30,16 +30,19 @@ public isolated class TextDataLoader {
 
     # Initializes the Azure Blob Storage data loader.
     #
-    # + connectionConfig - The authentication and service configuration shared by all sources
+    # + connection - The authentication and service configuration shared by all sources, or an
+    #                existing `blobs:BlobClient` to reuse. A supplied client is not owned by the
+    #                loader: the caller remains responsible for its lifecycle.
     # + sources - One or more Azure Blob containers to load documents from
     # + return - An `ai:Error` if the loader could not be initialized
-    public isolated function init(@display {label: "Connection Configurations"} blobs:ConnectionConfig connectionConfig,
+    public isolated function init(
+            @display {label: "Connection"} blobs:ConnectionConfig|blobs:BlobClient connection,
             @display {label: "Data Sources"} Source[] sources) returns ai:Error? {
         if sources.length() == 0 {
             return error ai:Error("At least one source must be provided to the Azure Blob Storage data loader");
         }
         self.sources = sources.cloneReadOnly();
-        self.blobClient = check newBlobClient(connectionConfig);
+        self.blobClient = connection is blobs:BlobClient ? connection : check newBlobClient(connection);
     }
 
     # Loads the configured Azure Blob Storage documents.

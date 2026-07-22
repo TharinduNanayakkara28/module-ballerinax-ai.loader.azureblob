@@ -37,6 +37,28 @@ isolated function testInitWithSourcesSucceeds() returns error? {
     TextDataLoader _ = check new (config, [{container: "documents"}]);
 }
 
+@test:Config {}
+isolated function testInitWithExistingClientSucceeds() returns error? {
+    // An already-constructed client is used as-is, so a caller sharing one client across
+    // several loaders does not open a second connection pool per loader.
+    blobs:ConnectionConfig config = {accountName: "acct", accessKeyOrSAS: "sas", authorizationMethod: blobs:SAS};
+    blobs:BlobClient blobClient = check new (config);
+    TextDataLoader _ = check new (blobClient, [{container: "documents"}]);
+}
+
+@test:Config {}
+isolated function testInitWithExistingClientStillValidatesSources() returns error? {
+    // The source check runs before the connection is resolved, so it applies to both forms.
+    blobs:ConnectionConfig config = {accountName: "acct", accessKeyOrSAS: "sas", authorizationMethod: blobs:SAS};
+    blobs:BlobClient blobClient = check new (config);
+    TextDataLoader|ai:Error loader = new (blobClient, []);
+    if loader is ai:Error {
+        test:assertTrue(loader.message().includes("At least one source"), loader.message());
+    } else {
+        test:assertFail("Expected an error when no sources are provided");
+    }
+}
+
 // ---- normalizeBlobPath -------------------------------------------------------
 
 @test:Config {}
