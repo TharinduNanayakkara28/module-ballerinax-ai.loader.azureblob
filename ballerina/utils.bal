@@ -84,9 +84,11 @@ isolated function extractText(byte[] content, string fileName, string mimeType)
     name: "extractText"
 } external;
 
-// The sentinel phrase the native extractor embeds when a PDF parses successfully but has
-// no text layer — a scanned / image-only document (mirrors TextExtractor.SCANNED_PDF_MESSAGE).
-const string SCANNED_PDF_SENTINEL = "no extractable text layer";
+// The sentinel phrase the native extractor embeds when a PDF parses successfully but yields
+// no text — a scanned / image-only document, or an empty one (see TextExtractor.SCANNED_PDF_MESSAGE).
+// Kept to the stable substring of that message, since the surrounding wording has been reworded
+// before and nothing enforces the two staying in sync.
+const string SCANNED_PDF_SENTINEL = "no extractable text";
 
 // Reports whether an error denotes a scanned (image-only) PDF. The loader uses this to
 // skip such files in prefix listings (with a warning) — like other non-text content —
